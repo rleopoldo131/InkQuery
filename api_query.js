@@ -29,7 +29,7 @@ function fetchWordDefinition(word, dictionary) {
     const wb_intermediate_key = "a19c9426-51cf-4c68-af55-de3b8229f559"; // intermediate key
     const wb_elemantary_key = "e59d86cd-4e68-4ffc-a389-9945b19a1f32"; // elemantary key
     const wb_spanish_key = "a29aabe7-82a8-4c85-8e27-3b0bb0d722d8"; // Spanish Key
-    
+
 
     if (dictionary === 'webster-intermediate') {
         url = `https://dictionaryapi.com/api/v3/references/sd3/json/${word}?key=${wb_intermediate_key}`;
@@ -41,8 +41,11 @@ function fetchWordDefinition(word, dictionary) {
     else if (dictionary === 'webster-spanish') {
         url = `https://dictionaryapi.com/api/v3/references/spanish/json/${word}?key=${wb_spanish_key}`;
     }
+    //INput last dictionary here
+    //else if (dictionary === '') {
+        //url = ``;
     else {
-        console.error('Invalid dictionary selection. Choose either "webster-intermediate, webster-elemantary, or webster-spanish."');
+        console.error('Invalid dictionary selection. Choose either "webster-intermediate, webster-elemantary, or webster-spanish."');  //add last dictionary
         return;
     }
 
@@ -67,7 +70,7 @@ const word = process.argv[2];
 const dictionary = process.argv[3]; 
 
 if (!word || !dictionary) {
-    console.error('Please provide a word and a dictionary ("webster-intermediate, webster-elemantary, or webster-spanish.)"');
+    console.error('Please provide a word and a dictionary ("webster-intermediate, webster-elemantary, or webster-spanish.)"');//add last dictionary
     process.exit(1); 
 }
 
