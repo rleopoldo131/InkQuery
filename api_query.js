@@ -74,4 +74,4 @@ if (!word || !dictionary) {
     process.exit(1); 
 }
 
-fetchWordDefinition(word, dictionary);  //
+fetchWordDefinition(word, dictionary);  
