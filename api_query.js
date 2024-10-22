@@ -21,27 +21,28 @@
 //     });
 
 
+
 const axios = require('axios');
 
 // Function to fetch a word's definition from a selected dictionary
-function fetchWordDefinition(word, dictionary) {
+function fetchWordDefinition(word, dictType = "wb-i") {
     let url = '';
     const wb_intermediate_key = "a19c9426-51cf-4c68-af55-de3b8229f559"; // intermediate key
     const wb_elementary_key = "e59d86cd-4e68-4ffc-a389-9945b19a1f32"; // elemantary key
     const wb_spanish_key = "a29aabe7-82a8-4c85-8e27-3b0bb0d722d8"; // Spanish Key
 
 
-    if (dictionary === 'wb-i') {
+    if (dictType === 'wb-i' || dictType === null) {
         url = `https://dictionaryapi.com/api/v3/references/sd3/json/${word}?key=${wb_intermediate_key}`;
     }
-    else if (dictionary === 'wb-e') {
+    else if (dictType === 'wb-e') {
         url = `https://dictionaryapi.com/api/v3/references/sd2/json/${word}?key=${wb_elementary_key}`;
 
     }
-    else if (dictionary === 'wb-s') {
+    else if (dictType === 'wb-s') {
         url = `https://dictionaryapi.com/api/v3/references/spanish/json/${word}?key=${wb_spanish_key}`;
     }
-        //INput last dictionary here
+        //Input last dictionary here
         //else if (dictionary === '') {
     //url = ``;
     else {
@@ -49,8 +50,7 @@ function fetchWordDefinition(word, dictionary) {
         return;
     }
 
-    console.log(`Word to search: ${word}`);
-    console.log(`Fetching definition from ${dictionary}: ${url}`);
+    console.log(`\nFetching definition from ${dictType}: ${url}`);
 
     const data = axios.get(url).then(response => response.data);
     return data;
@@ -70,29 +70,38 @@ function fetchWordDefinition(word, dictionary) {
 }
 
 // user input
-const word = process.argv[2];
-const dictionary = process.argv[3];
+let word;
+let dictType;
 
-if (!word || !dictionary) {
-    console.error('Please provide a word and a dictionary. "wb-i", "wb-e", or "wb-s)"');//add last dictionary
+word = process.argv[2];
+
+if (process.argv.length > 3) {
+    dictType = process.argv[3];
+}
+
+if (!word) {
+    // console.error('Please provide a word and a dictionary. "wb-i", "wb-e", or "wb-s)"');//add last dictionary
+    console.error('Please provide a word.')
     process.exit(1);
 }
 
 function displayWord() {
-    fetchWordDefinition(word, dictionary)
-        .then(d => {
+    fetchWordDefinition(word, dictType)
+        .then(data => {
             //Returns the very first result (most popular)
-            console.log("\n\n");
+            console.log("| | |\n| | |\nV V V");
             //Converts wordID into the actual word
-            var word = d[0].meta.id.split(":")[0];
+            let word = data[0].meta.id.split(":")[0];
             //Capitalizes first letter
-            var word = word.charAt(0).toUpperCase() + word.slice(1);
+            word = word.charAt(0).toUpperCase() + word.slice(1);
+            let wordDef = data[0].shortdef[0]
+            wordDef = wordDef.charAt(0).toUpperCase() + wordDef.slice(1) + '.';
             //Prints the following:
             //Word, Type (noun, verb, adj, etc)
-            console.log(word, "(",d[0].fl,")");
+            console.log(`\nYour Word: ${word}, (${data[0].fl})\n`);
             //Definition(s)
-            console.log("Definitions:");
-            console.log(d[0].shortdef, "\n");
+            console.log("Definitions:\n");
+            console.log(wordDef, "\n");
         })
         .catch(err => console.log(err))
 }
