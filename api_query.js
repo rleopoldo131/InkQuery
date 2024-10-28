@@ -1,26 +1,8 @@
-
-// // Access command line arguments
-// const word = process.argv.slice(2)[0]; // Skip the first two elements
-
-// // args will now contain only the arguments passed to the script
-// console.log('Word to search:', word);
-
-// const axios = require('axios');
-
-// const wb_intermediate_key = "a19c9426-51cf-4c68-af55-de3b8229f559";
-// const url = `https://dictionaryapi.com/api/v3/references/sd3/json/${word}?key=${wb_intermediate_key}`;
-
-// console.log(url)
-
-// axios.get(url)
-//     .then(response => {
-//         console.log(response.data);
-//     })
-//     .catch(error => {
-//         console.error('Error fetching the definition:', error);
-//     });
-
-
+// const fs = require('fs')
+// const { JSDOM } = require("jsdom");
+// const document = window.document;
+// const htmlContent = fs.readFileSync('query_output.html', 'utf-8');
+// const { window } = new JSDOM(htmlContent);
 
 const axios = require('axios');
 
@@ -54,19 +36,6 @@ function fetchWordDefinition(word, dictType = "wb-i") {
 
     const data = axios.get(url).then(response => response.data);
     return data;
-
-    /*axios.get(url)
-        .then(response => {
-            if (response.data.length === 0) {
-                console.log(`No definitions found for: ${word}`);
-            } else {
-                console.log(`Definition from ${dictionary}:`, response.data);
-                //return response.data.meta;
-            }
-        })
-        .catch(error => {
-            console.error(`Error fetching the definition from ${dictionary}:`, error);
-        });*/
 }
 
 // user input
@@ -84,6 +53,17 @@ if (!word) {
     console.error('Please provide a word.')
     process.exit(1);
 }
+
+// // Take a word in as input from text box.
+// let wordInput;
+// const wordButton = document.getElementById("wordButton").onclick = function () {
+//     wordInput = document.getElementById("wordButton").value;
+//     yourWord.textContent = word;
+// }
+//
+// // Gets the yourWord label from query_output.html.
+// yourWord = document.getElementById("yourWordLabel")
+
 
 function displayWord() {
     fetchWordDefinition(word, dictType)
