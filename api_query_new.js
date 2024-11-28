@@ -1,19 +1,41 @@
 import wm_getDef from "./inkquery_methods_new.js"
 
 
-let wordDef;
-let wordLabel;
 document.getElementById("wordButton").onclick = async function() {
-    wordLabel = document.getElementById("wordIn").value;
+
+    const intermediateBtn = document.getElementById("intermediateBtn");
+    const elementaryBtn = document.getElementById("elementaryBtn");
+    const collegiateBtn = document.getElementById("collegiateBtn");
+    const spanishBtn = document.getElementById("spanishBtn");
+
+    let checkedBtnInput = "intermediate";
+
+    if (intermediateBtn.checked){
+        checkedBtnInput = "intermediate";
+    }
+    else if (elementaryBtn.checked){
+        checkedBtnInput = "elementary";
+    }
+    else if (collegiateBtn.checked){
+        checkedBtnInput = "collegiate";
+    }
+    else if (spanishBtn.checked){
+        checkedBtnInput = "spanish";
+    }
+
+    console.log(checkedBtnInput);
+
+    const wordLabel = document.getElementById("wordIn").value;
     document.getElementById("yourWordLabel").textContent = wordLabel;
 
     try {
-        wordDef = await wm_getDef(wordLabel);
+        const wordDef = await wm_getDef(wordLabel, checkedBtnInput);
         document.getElementById("defLabel").textContent = wordDef;
         console.log(wordDef);
     }
     catch(error) {
         console.error("Error fetching definition", error);
+        document.getElementById("defLabel").textContent = "Error displaying definition.";
     }
 }
 
