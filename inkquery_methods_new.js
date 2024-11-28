@@ -1,56 +1,66 @@
-import axios from 'axios';
 
-// Function to fetch a word's definition from a selected dictionary
-function fetchWordDefinition(word, dictType = "wb-i") {
-    let url = '';
-    let data;
-    const wb_intermediate_key = "a19c9426-51cf-4c68-af55-de3b8229f559"; // intermediate key
-    const wb_elementary_key = "e59d86cd-4e68-4ffc-a389-9945b19a1f32"; // elemantary key
-    const wb_spanish_key = "a29aabe7-82a8-4c85-8e27-3b0bb0d722d8"; // Spanish Key
+function fetchData(word, dictType = 'intermediate') {
 
+    const dictCodes = {
+        "intermediate": "sd3", "elementary": "sd2", "collegiate": "collegiate", "spanish": "spanish"
+    };
 
-    if (dictType === 'wb-i' || dictType === null) {
-        url = `https://dictionaryapi.com/api/v3/references/sd3/json/${word}?key=${wb_intermediate_key}`;
-    }
-    else if (dictType === 'wb-e') {
-        url = `https://dictionaryapi.com/api/v3/references/sd2/json/${word}?key=${wb_elementary_key}`;
+    const dictKeys = {
+        "intermediate": "a19c9426-51cf-4c68-af55-de3b8229f559",
+        "elementary": "e59d86cd-4e68-4ffc-a389-9945b19a1f32",
+        "collegiate": "95da4924-31ba-4752-b070-f434ec41a1ba",
+        "spanish": "a29aabe7-82a8-4c85-8e27-3b0bb0d722d8"
+    };
 
-    }
-    else if (dictType === 'wb-s') {
-        url = `https://dictionaryapi.com/api/v3/references/spanish/json/${word}?key=${wb_spanish_key}`;
-    }
-        //Input last dictionary here
-        //else if (dictionary === '') {
-    //url = ``;
-    else {
-        console.error('Invalid dictionary selection. Choose either "wb-i", "wb-e", or "wb-s."');  //add last dictionary
-        return;
-    }
+    const url = `https://dictionaryapi.com/api/v3/references/${dictCodes[dictType]}/json/${word}?key=${dictKeys[dictType]}`;
 
-    console.log(`\nFetching definition from ${dictType}: ${url}`);
+    return fetch(url)
+    .then(response => {
+        if (!response.ok) {
+            console.error("Response not ok");
+            throw new Error(response.status);
+        }
+        return response.json()
+    })
+    .catch(error => {
+        console.error("Error fetching")
+        console.error(error);
+        throw error;
+    });
+}
 
-    data = axios.get(url).then(response => response.data);
-    return data;
+export default function wm_getDef(word, dictType = 'intermediate') {
+    return fetchData(word, dictType)
+    .then(data => {
+        return data[0].shortdef[0];
+    })
+    .catch(error => console.error(error));
 }
 
 
-export function displayWordDef(word, dictType) {
-    fetchWordDefinition(word, dictType)
-        .then(data => {
-            //Returns the very first result (most popular)
-            console.log("| | |\n| | |\nV V V");
-            //Converts wordID into the actual word
-            let word = data[0].meta.id.split(":")[0];
-            //Capitalizes first letter
-            word = word.charAt(0).toUpperCase() + word.slice(1);
-            let wordDef = data[0].shortdef[0]
-            wordDef = wordDef.charAt(0).toUpperCase() + wordDef.slice(1) + '.';
-            //Prints the following:
-            //Word, Type (noun, verb, adj, etc)
-            console.log(`\nYour Word: ${word}, (${data[0].fl})\n`);
-            //Definition(s)
-            console.log("Definitions:\n");
-            console.log(wordDef, "\n");
-        })
-        .catch(err => console.log(err))
-}
+// fetch(url)
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error(response.statusText);
+//         }
+//         return response.json()
+//     })
+//     .then(data => console.log(data))
+//     .catch(error => console.error(error))
+
+// async function fetchData(){
+//
+//     try{
+//         const response = await fetch(url);
+//         if (!response.ok) {
+//             throw new Error(response.statusText);
+//         }
+//
+//         const data = await response.json();
+//         console.log(data);
+//     }
+//     catch(error){
+//         console.error(error);
+//     }
+//
+// }
