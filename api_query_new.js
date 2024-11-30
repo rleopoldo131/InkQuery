@@ -8,19 +8,32 @@ document.getElementById("wordButton").onclick = async function() {
     const collegiateBtn = document.getElementById("collegiateBtn");
     const spanishBtn = document.getElementById("spanishBtn");
 
-    let checkedBtnInput = "intermediate";
+    let checkedBtnInput = "English intermediate";
 
     if (intermediateBtn.checked){
-        checkedBtnInput = "intermediate";
-    }
-    else if (elementaryBtn.checked){
-        checkedBtnInput = "elementary";
-    }
-    else if (collegiateBtn.checked){
-        checkedBtnInput = "collegiate";
-    }
-    else if (spanishBtn.checked){
-        checkedBtnInput = "spanish";
+        checkedBtnInput = "English intermediate";
+    } else if (elementaryBtn.checked){
+        checkedBtnInput = "English elementary";
+    } else if (collegiateBtn.checked){
+        checkedBtnInput = "English collegiate";
+    } else if (spanishBtn.checked){
+        checkedBtnInput = "Spanish";
+    } else if (japaneseBtn.checked){
+        checkedBtnInput = "Japanese";
+    } else if (russianBtn.checked){
+        checkedBtnInput = "Russian";
+    }else if (germanBtn.checked){
+        checkedBtnInput = "German";
+    } else if (frenchBtn.checked){
+        checkedBtnInput = "French";
+    } else if (swedishBtn.checked){
+        checkedBtnInput = "Swedish";
+    } else if (dutchBtn.checked){
+        checkedBtnInput = "Dutch";
+    } else if (hungarianBtn.checked){
+        checkedBtnInput = "Hungarian";
+    } else if (slovenianBtn.checked){
+        checkedBtnInput = "Slovenian";
     }
 
     console.log(checkedBtnInput);

@@ -1,38 +1,138 @@
 
-function fetchData(word, dictType = 'intermediate') {
+function fetchData(word, langType = 'English intermediate') {
 
     const dictCodes = {
-        "intermediate": "sd3", "elementary": "sd2", "collegiate": "collegiate", "spanish": "spanish"
+        "English intermediate": "sd3", "English elementary": "sd2", "English collegiate": "collegiate", "Spanish": "spanish"
     };
 
     const dictKeys = {
-        "intermediate": "a19c9426-51cf-4c68-af55-de3b8229f559",
-        "elementary": "e59d86cd-4e68-4ffc-a389-9945b19a1f32",
-        "collegiate": "95da4924-31ba-4752-b070-f434ec41a1ba",
-        "spanish": "a29aabe7-82a8-4c85-8e27-3b0bb0d722d8"
+        "English intermediate": "a19c9426-51cf-4c68-af55-de3b8229f559",
+        "English elementary": "e59d86cd-4e68-4ffc-a389-9945b19a1f32",
+        "English collegiate": "95da4924-31ba-4752-b070-f434ec41a1ba",
+        "Spanish": "a29aabe7-82a8-4c85-8e27-3b0bb0d722d8"
     };
 
-    const url = `https://dictionaryapi.com/api/v3/references/${dictCodes[dictType]}/json/${word}?key=${dictKeys[dictType]}`;
 
-    return fetch(url)
-    .then(response => {
-        if (!response.ok) {
-            console.error("Response not ok");
-            throw new Error(response.status);
-        }
-        return response.json()
-    })
-    .catch(error => {
-        console.error("Error fetching")
-        console.error(error);
-        throw error;
-    });
+    /*
+    const Languages = [
+        "English intermediate",
+        "English elementary",
+        "English collegiate",
+        "Spanish",
+        "Japanese",
+        "Russian",
+        "German",
+        "French",
+        "Swedish",
+        "Dutch",
+        "Hungarian",
+        "Slovenian",
+    ];
+
+    const dicTypes = {
+        "MerriamW":`https://dictionaryapi.com/api/v3/references/${dictCodes[langType]}/json/${word}?key=${dictKeys[langType]}`,
+        "Jotoba": `https://jotoba.de/api/search/words`
+    };
+
+    cost urlSelection = Object.fromEntries(Languages.map(field => [field, dicTypes[1]]));
+    dicTypes["English intermediate"] = dicTypes["English elementary"] = dicTypes["English collegiate"] = dicTypes["Spanish"] = dicTypes[0];
+
+
+    */
+
+    const urlSelection = {
+        //Spanish & English
+        "Spanish": `https://dictionaryapi.com/api/v3/references/${dictCodes[langType]}/json/${word}?key=${dictKeys[langType]}`,
+        "English elementary": `https://dictionaryapi.com/api/v3/references/${dictCodes[langType]}/json/${word}?key=${dictKeys[langType]}`,
+        "English intermediate": `https://dictionaryapi.com/api/v3/references/${dictCodes[langType]}/json/${word}?key=${dictKeys[langType]}`,
+        "English collegiate": `https://dictionaryapi.com/api/v3/references/${dictCodes[langType]}/json/${word}?key=${dictKeys[langType]}`,
+        //Japanese/German/Russain/Swedish/French/Dutch/Hungarian/Slovenian
+        //Note: Also includes Spanish
+        "Japanese": `https://jotoba.de/api/search/words`,
+        "Russian": `https://jotoba.de/api/search/words`,
+        "German": `https://jotoba.de/api/search/words`,
+        "French": `https://jotoba.de/api/search/words`,
+        "Swedish": `https://jotoba.de/api/search/words`,
+        "Dutch": `https://jotoba.de/api/search/words`,
+        "Hungarian": `https://jotoba.de/api/search/words`,
+        "Slovenian": `https://jotoba.de/api/search/words`
+    };
+
+    const url = `${urlSelection[langType]}`;
+    const queryLoad = {
+        query: `${word}`,
+        language: `${langType}`,
+        no_english: false //DO NOT CHANGE
+    };
+    
+    
+    
+    if( langType == "Japanese" || 
+        langType == "Russian" ||
+        langType == "German" ||
+        langType == "French" ||
+        langType == "Swedish" ||
+        langType == "Dutch" ||
+        langType == "Hungarian" ||
+        langType == "Slovenian"
+    ) { 
+        return fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(queryLoad)
+        }).then(response => {
+            if (!response.ok) {
+                console.error("Response not ok");
+                throw new Error(response.status);
+            }
+            return response.json()
+        })
+        .catch(error => {
+            console.error("Error fetching")
+            console.error(error);
+            throw error;
+        });
+    } else {
+        return fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                console.error("Response not ok");
+                throw new Error(response.status);
+            }
+            return response.json()
+        })
+        .catch(error => {
+            console.error("Error fetching")
+            console.error(error);
+            throw error;
+        });
+    }
+   
 }
 
-export default function wm_getDef(word, dictType = 'intermediate') {
-    return fetchData(word, dictType)
+export default function wm_getDef(word, langType = 'English intermediate') {
+    return fetchData(word, langType)
     .then(data => {
-        return data[0].shortdef[0];
+        if( langType == "Japanese" || 
+            langType == "Russian" ||
+            langType == "German" ||
+            langType == "French" ||
+            langType == "Swedish" ||
+            langType == "Dutch" ||
+            langType == "Hungarian" ||
+            langType == "Slovenian"
+        ) {
+            const dta = data.words[0].senses;
+            const keys = Object.keys(dta);
+            const lastKey = keys[keys.length - 1];
+            return dta[lastKey].glosses[0];
+        } else {
+            return data[0].shortdef[0];
+        }
+        
+        
     })
     .catch(error => console.error(error));
 }
