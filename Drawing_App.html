@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Drawing App</title>
+  <title>✍️ Inkquery</title>
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
       display: flex;
@@ -30,7 +31,7 @@
 </head>
 <body>
   <h1>Drawing App</h1>
-  <canvas id="canvas" width="1800" height="800"></canvas>
+  <canvas id="canvas" width=1200 height=600></canvas>
   
   <div id="controls">
     <label for="colorPicker">Color:</label>
@@ -116,6 +117,7 @@
         return `{ x: [${stroke.x.join(", ")}], y: [${stroke.y.join(", ")}] }`;
       }).join(", ");
       outputDiv.textContent = `[ ${formattedStrokes} ]`;
+      window.location.href = "results.html";
     });
     
 

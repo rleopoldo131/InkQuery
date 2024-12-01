@@ -1,4 +1,4 @@
-import wm_getDef from "./inkquery_methods_new.js"
+import wm_getDef from "./inkquery_methods.js"
 
 
 document.getElementById("wordButton").onclick = async function() {
@@ -50,6 +50,8 @@ document.getElementById("wordButton").onclick = async function() {
         console.error("Error fetching definition", error);
         document.getElementById("defLabel").textContent = "Error displaying definition.";
     }
+
+    window.location.href = "Drawing_App.html";
 }
 
 

@@ -127,8 +127,10 @@ export default function wm_getDef(word, langType = 'English intermediate') {
             const dta = data.words[0].senses;
             const keys = Object.keys(dta);
             const lastKey = keys[keys.length - 1];
+            console.log(dta[lastKey].glosses[0]);
             return dta[lastKey].glosses[0];
         } else {
+            console.log(data[0].shortdef[0]);
             return data[0].shortdef[0];
         }
         
