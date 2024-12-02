@@ -20,6 +20,34 @@
       margin-top: 10px;
       display: flex;
       gap: 10px;
+      align-items: center;
+    }
+    #brushSizeContainer {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .brush-dot {
+      display: inline-block;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 1px solid black;
+      background-color: #000;
+    }
+    .brush-dot[data-size="2"] {
+      width: 10px;
+      height: 10px;
+    }
+    .brush-dot[data-size="5"] {
+      width: 20px;
+      height: 20px;
+    }
+    .brush-dot[data-size="10"] {
+      width: 30px;
+      height: 30px;
+    }
+    .brush-dot.active {
+      border: 2px solid red;
     }
     #output {
       margin-top: 10px;
@@ -31,17 +59,20 @@
 </head>
 <body>
   <h1>Drawing App</h1>
-  <canvas id="canvas" width=1200 height=600></canvas>
+  <canvas id="canvas" width="1200" height="600"></canvas>
   
   <div id="controls">
     <label for="colorPicker">Color:</label>
     <input type="color" id="colorPicker" value="#000000">
     
-    <label for="brushSize">Brush Size:</label>
-    <input type="range" id="brushSize" min="1" max="10" value="5">
+    <div id="brushSizeContainer">
+      <span class="brush-dot" data-size="2"></span>
+      <span class="brush-dot" data-size="5"></span>
+      <span class="brush-dot" data-size="10"></span>
+    </div>
     
-    <button id="clearButton">Clear Canvas</button>
-    <button id="saveButton">Save Strokes</button>
+    <button id="clearButton">🗑️</button>
+    <button id="saveButton">💾</button>
   </div>
 
   <div id="output"></div>
@@ -50,27 +81,37 @@
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const colorPicker = document.getElementById('colorPicker');
-    const brushSize = document.getElementById('brushSize');
     const clearButton = document.getElementById('clearButton');
     const saveButton = document.getElementById('saveButton');
+    const brushDots = document.querySelectorAll('.brush-dot');
     const outputDiv = document.getElementById('output');
 
     let drawing = false;
     let currentStroke = []; // Array to store points of the current stroke
     let strokes = [];       // Array to store all strokes
 
-    // Start drawing and begin recording stroke
+    // Set default brush size
+    ctx.lineWidth = 5;
+    document.querySelector('.brush-dot[data-size="5"]').classList.add('active');
+
+    // Brush size selection
+    brushDots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        brushDots.forEach(dot => dot.classList.remove('active'));
+        dot.classList.add('active');
+        ctx.lineWidth = parseInt(dot.dataset.size, 10);
+      });
+    });
+
     function startDrawing(event) {
       drawing = true;
-      currentStroke = []; // Reset current stroke
-      addPoint(event);    // Add the starting point to the stroke
+      currentStroke = [];
+      addPoint(event);
     }
 
-    // Draw on the canvas and add points to the current stroke
     function draw(event) {
       if (!drawing) return;
 
-      ctx.lineWidth = brushSize.value;
       ctx.lineCap = 'round';
       ctx.strokeStyle = colorPicker.value;
 
@@ -79,16 +120,14 @@
       ctx.beginPath();
       ctx.moveTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
 
-      addPoint(event); // Add each point to the stroke
+      addPoint(event);
     }
 
-    // Stop drawing and save the current stroke
     function stopDrawing() {
       if (drawing) {
         drawing = false;
-        ctx.beginPath(); // Reset path
+        ctx.beginPath();
         if (currentStroke.length > 0) {
-          // Convert the stroke to Quick, Draw! format and add to strokes array
           strokes.push({
             x: currentStroke.map(point => point[0]),
             y: currentStroke.map(point => point[1])
@@ -97,18 +136,16 @@
       }
     }
 
-    // Add a point to the current stroke
     function addPoint(event) {
       const x = event.clientX - canvas.offsetLeft;
       const y = event.clientY - canvas.offsetTop;
       currentStroke.push([x, y]);
     }
 
-    // Clear canvas and reset strokes
     clearButton.addEventListener('click', () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      strokes = []; // Clear strokes array
-      outputDiv.textContent = ''; // Clear output
+      strokes = [];
+      outputDiv.textContent = '';
     });
 
     saveButton.addEventListener('click', () => {
@@ -119,9 +156,7 @@
       outputDiv.textContent = `[ ${formattedStrokes} ]`;
       window.location.href = "results.html";
     });
-    
 
-    // Set up event listeners for drawing
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseup', stopDrawing);
