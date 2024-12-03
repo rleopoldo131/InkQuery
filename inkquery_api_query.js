@@ -46,10 +46,12 @@ document.getElementById("wordButton").onclick = async function() {
         document.getElementById("defLabel").textContent = wordDef;
         console.log(wordDef);
     }
+    <! -- 
     catch(error) {
         console.error("Error fetching definition", error);
         document.getElementById("defLabel").textContent = "Error displaying definition.";
-    }
+    } 
+-->
 
     window.location.href = "Drawing_App.html";
 }
